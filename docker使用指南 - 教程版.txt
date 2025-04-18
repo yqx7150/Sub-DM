@@ -1,0 +1,121 @@
+如何使用docker进行python的conda环境搭建
+
+下述内容皆为从https://www.runoob.com/docker/docker-image-usage.html学习得到，如果想有稍微系统的学习，建议直接看这个链接学习即可，可以只看前三章就行了（Docker Hello World，Docker 容器使用，Docker 镜像使用）。预计耗时一下午足矣，可以减少很多只看笔记，产生摸不着头脑感觉的问题。
+
+下面内容为应急版笔记，用于最快时间地使用docker：
+
+
+●安装docker（若已安装可跳过此步）
+参考：
+https://blog.csdn.net/qq_34567537/article/details/127551257
+
+
+sudo apt update
+
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+
+sudo apt update
+
+检查使用的是https://download.docker.com/XXXX
+apt-cache policy docker-ce
+
+sudo apt-get install docker-ce
+
+验证是否安装成功：
+sudo systemctl status docker
+
+
+●docker镜像和容器概念
+docker镜像，你可以把它当成是一个新的电脑A，你可以从这个电脑A复制一份，创建一个新的电脑（也就是docker容器）B，然后你就可以在这个新容器B里面为所欲为了，容器也可以看成一个电脑，虚拟机之类的东西，你可以随时创建随时删除（勉强可以这么理解）。
+
+
+●下载NCSN的环境，也就是下载docker镜像
+一般来说，看此教程的人都是为了跑ncsnpp，这里就提供装好的docker环境
+这里有两个环境，如果是30系显卡，例如3060Ti，请下载这个环境：
+docker pull zieghart/base:ncsnppC11
+如果不是30系显卡，就下载这个环境：
+docker pull zieghart/ncsn:ncsnbase_perfect
+
+注意，大约需要占用三四十G的空间，确保电脑有硬盘空间再下载。
+
+这镜像是我传到docker的网站上的，里面包含了一个conda，其中有ncsn的环境
+
+
+
+●创建docker容器（请根据下面的解释，自己看情况创建）
+
+下面是示例语句，请根据自己的需求修改，复制粘贴肯定是会报错的。
+
+docker run -it --gpus=all -p 4766:22 -v /home/lqg/code:/code --name fuck zieghart/base:ncsnppC11 env LANG=C.UTF-8 /bin/bash
+
+docker run -it --gpus=all -p 4766:22 -v /home/lqg/ypf1:/ypf1 --name ypf  zieghart/base:ncsnppC11 env LANG=C.UTF-8 /bin/bash
+
+docker run -it --gpus=all -p 5213:22 -v /home:/home --name XXX容器名XX nvidia/cuda:11.1.1-devel-ubuntu1804 env LANG=C.UTF-8 /bin/bash
+
+解释：
+docker run .... zieghart/XXXX ....： 从某个镜像（镜像可以当成某个基础环境，比如一个预先安装了cuda10和ubuntu16的镜像）创建一个容器，镜像名字就在--name XXX 的后面：zieghart/XXXX就是一个镜像
+--gpus是启用所有gpus
+-p是端口映射，映射完可以用服务器IP+端口7777的方式，用vscode或者pycharm进行远程连接到你新创建的容器
+-v是路径映射，-v 路径A:路径B等于把电脑上的A目录映射成docker容器里的B目录，改任意一方，两者看到的文件都会变动，可以两个都一样。例如-v /home/lqg:/home/lqg
+env LANG=C.UTF-8 是为了启用中文，但好像永久了会失效，忘记了。
+-it和/bin/bash结合就可以用命令行方式在docker容器内部敲代码（一个容器差不多可以当成一个新电脑），具体怎么实现我也不知道，也可以就把他们当成固定要输入的代码
+
+
+●查看服务器上所有容器（未进入容器时使用）
+docker ps -a
+可以看容器运行状态：【停止】或者【运行中】
+
+●进入容器
+docker start fuck（如果容器已经【运行】，那就可以省却这句）
+docker exec -it fuck /bin/bash
+
+●然后像平时使用命令行一样用就可以了
+
+另外，docker的conda目录在/root/miniconda下面。
+
+●另外的另外，上面弄完，可以用ssh连接docker，但是要用pyharm远程调试，请看【docker远程连接】的操作
+
+
+
+
+
+systemctl start docker ypf
+
+docker exec -it ypf /bin/bash
+==========================
+source ~/anaconda3/bin/activate
+
+
+sudo gedit ~/.bashrc
+
+export PATH="/usr/local/cuda-11.0/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-11.0/lib64:$LD_LIBRARY_PATH"
+
+source ~/.bashrc
+
+nvcc -V
+
+https://zhuanlan.zhihu.com/p/122286055
+
+https://zhuanlan.zhihu.com/p/520536351 
+
+换源
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+
+conda config --set show_channel_urls yes
+
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+删除
+pip config unset global.index-url
+删除源
+conda config --show
+conda config --remove-key channels
+conda config --show
+
+pip config unset global.index-url
