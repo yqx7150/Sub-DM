@@ -36,25 +36,19 @@ python PCsampling_demo_parallel_svd_dwt_2model2.py
 ```
 
 ## Graphical representation
-### The whole pipeline of GLDM is illustrated in Fig1
+### The stacked formulation in subspace in Fig.1
 <div align="center"><img src="https://github.com/yqx7150/Sub-DM/blob/main/Fig.1.png" >  </div>
-The schematic of the proposed GLDM algorithm. Red and blue parts represent the training stage that fully encoded full-resolution reference data is constructed through a time-interleaved acquisition scheme. Red part merges all time frames to train the global model (GM) while the blue part merges local time frames to train the local model (LM). Green part represents the reconstruction stage which the structure of the reconstruction model exists in a cascade form and the under-sampled k-space data (16 frames) are sequentially input into the network. At the same time, optimization unit (OU) containing a LR operator and a DC term is introduced to better remove aliasing and restore details
+Low-rank property of wavelet components and the corresponding stacked formulation in subspace.
 
-### Time-interleaved acquisition scheme is visualized in Fig2.
+### An overview of Sub-DM based on subspace low-rank learning. in Fig2.
 <div align="center"><img src="https://github.com/yqx7150/Sub-DM/blob/main/Fig.2.png" >  </div>
-The core of the approach is to construct a complete k-space dataset by merging any number of adjacent time frames. In the above example, two different under-sampled patterns (uniform and random) at 5-fold acceleration are acquired via a time-interleaved acquisition scheme.
+An overview of Sub-DM based on subspace low-rank learning. In the training phase, k-space data undergoes diffusion migration across two distinct spaces. The original k-space data diffuses in the full space, while the orthogonally decomposed k-space data components diffuse in the subspace. During the reconstruction phase, the dimension of the under-sampled k-space data is dynamically changed by orthogonal wavelet decomposition and iteratively reconstructed in various diffusion spaces. Upon completion of the iterations, an optimization module is integrated to enhance the sampling quality.
 
-### The time-interleaved acquisition scheme of 4 frames of dynamic MRI is visualized in Fig3.
+### Convergence analysis of different models in Fig3.
 <div align="center"><img src="https://github.com/yqx7150/Sub-DM/blob/main/Fig.3.png" >  </div>
-The ACS of each frame remains unaltered, while the remainder of the area is filled with data from adjacent frames. The distinct colors rep-resent data contributions from different frames
+Convergence analysis of HKGM, WKGM, HFS-SDE, CSGM-MRI, Score-MRI and Sub-DM in terms of PSNR versus the iteration steps for brain image reconstruction at R=8 under Poisson sampling.
 
-###  Convergence curves of PSNR and MSE of GLDM and the number of iterations
+###  Experimental results of knee in Fig4.
 <div align="center"><img src="https://github.com/yqx7150/Sub-DM/blob/main/Fig.4.png" >  </div>
-Convergence curves of PSNR and MSE of GLDM and the number of iterations
+Experimental results of different methods in terms of PSNR and SSIM in out-of-distribution reconstruction tasks with 2D Random and Poisson mask.
 
-## Other Related Projects    
-  * Homotopic Gradients of Generative Density Priors for MR Image Reconstruction  
-[<font size=5>**[Paper]**</font>](https://ieeexplore.ieee.org/abstract/document/9435335)   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/HGGDP) [<font size=5>**[Slide]**</font>](https://github.com/yqx7150/HGGDP/tree/master/Slide)  
-
-* One-shot Generative Prior in Hankel-k-space for Parallel Imaging Reconstruction  
-[<font size=5>**[Paper]**</font>](https://arxiv.org/abs/2208.07181)   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/HKGM)   [<font size=5>**[PPT]**</font>](https://github.com/yqx7150/HKGM/tree/main/PPT)
