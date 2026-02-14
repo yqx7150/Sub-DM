@@ -2,8 +2,8 @@
 **Paper**: Sub-DM: Subspace Diffusion Model with Orthogonal Decomposition for MRI Reconstruction
 
 **Authors**: Yu Guan, Qinrong Cai, Wei Li, Qiuyun Fan, Dong Liang, Qiegen Liu *
-
-https://arxiv.org/abs/2411.03758
+ 
+IEEE Transactions on Computational Imaging, vol. 12, pp. 309-320, 2026, https://ieeexplore.ieee.org/document/11345970
 
 Date : November-6-2024  
 Version : 1.0  
